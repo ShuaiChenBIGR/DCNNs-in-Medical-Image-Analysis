@@ -6,11 +6,11 @@
 Que="day"
 Memory="15G"
 Input_Folder=/scratch/zsedghi/Data/DLCST
-Output_Folder=/scratch/zsedghi/Shuai_Results/Segmentation
+Output_Folder=/scratch/schen/Evaluation/Final_Accuracy
 Manual_Folder=/scratch/zsedghi/Data/DLCST_Manual_Centerlines_Seeds
 Manual_Bif_Folder=/scratch/zsedghi/Data/DLCST_BifPoint
-Path_Code=/home/zsedghi/Medical_Phisics_AortaPulmoSegmentation/Scripts/Deeplearning_segmentation/Segment_Shuai_Results.sh
-Initialization=/scratch/zsedghi/Analysis/Shuai-Results/results_20180309
+Path_Code=/scratch/schen/Evaluation/Scripts/Segment_Shuai_Results.sh
+Initialization=/scratch/schen/Evaluation/Results
 
 # Create output and log folders
 Log_Folder=$Output_Folder/Logs
@@ -30,7 +30,7 @@ echo "$(date +%d-%m-%Y----%T)" >> $Log_File
 eval cat $Log_File
 
 # Call Volumes in Input Folder
-names="2157 754 809 85"  #57 58 69 73 85 93 167 221 371 658 754 809 2157 3418 3885"
+names="57 58 69 73 85 93 167 221 371 658 754 809 2157 3418 3885"
 for ii in ${names} 
 do
 for vol in ${Input_Folder}/vol${ii}.dcm
@@ -40,7 +40,7 @@ do
 	 Output=$Output_Folder/${File}
 	 mkdir -p $Output
 	 
-	 Initial=$Initialization/${File}/masksAortaPredicted.dcm
+	 Initial=$Initialization/${File}/DICOM/masksAortaPredicted.dcm
 	 Manual_Seg=$Manual_Folder/${File}/Aorta/${File}_Manual_3DMask.dcm
 	 Manual_Center=$Manual_Folder/${File}/Aorta/${File}_Aorta_Centerline_resampled.txt
 	 Manual_Bif=$Manual_Bif_Folder/${File}_BifurcationPoint.txt

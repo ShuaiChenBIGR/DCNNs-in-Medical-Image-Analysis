@@ -6,11 +6,11 @@
 Que="day"
 Memory="10G"
 Input_Folder=/scratch/zsedghi/Data/DLCST
-Output_Folder=/scratch/zsedghi/Shuai_Results/Segmentation_Pulmonary
+Output_Folder=/scratch/schen/Evaluation/Final_Accuracy
 Manual_Folder=/scratch/zsedghi/Data/DLCST_Manual_Centerlines_Seeds
 Manual_Bif_Folder=/scratch/zsedghi/Data/DLCST_BifPoint
-Path_Code=/home/zsedghi/Medical_Phisics_AortaPulmoSegmentation/Scripts/Deeplearning_segmentation/Segment_pulmo_Shuai_Results.sh
-Initialization=/scratch/zsedghi/Analysis/Shuai-Results/results_20180309
+Path_Code=/scratch/schen/Evaluation/Scripts/Segment_pulmo_Shuai_Results.sh
+Initialization=/scratch/schen/Evaluation/Results
 
 # Create output and log folders
 Log_Folder=$Output_Folder/Logs
@@ -40,7 +40,7 @@ do
 	 Output=$Output_Folder/${File}
 	 mkdir -p $Output
 	 
-	 Initial=$Initialization/${File}/masksPulPredicted.dcm
+	 Initial=$Initialization/${File}/DICOM/masksPulPredicted.dcm
 	 Manual_Seg=$Manual_Folder/${File}/Full_Pulmonary/${File}_Manual_Connected_Mask.dcm
 	 Manual_leftCenter=$Manual_Folder/${File}/Pulmonary_Left/${File}_Pulmonary_Left_Centerline_resampled.txt
 	 Manual_RightCenter=$Manual_Folder/${File}/Pulmonary_Right/${File}_Pulmonary_Right_Centerline_resampled.txt

@@ -56,8 +56,8 @@ NOW=$(date +%d-%m-%Y)
  Seg_Aorta_Contrast=$Output_folder/Aorta_Segmentation_ContrastReduced
  Seg_Net=$Output_folder/Deeplearning_Accuracy
 
- mkdir -p $Seg_Aorta_Org
- mkdir -p $Seg_Aorta_Contrast
+ #mkdir -p $Seg_Aorta_Org
+ #mkdir -p $Seg_Aorta_Contrast
  mkdir -p $Seg_Net
  
 #################################################################################################################################################
@@ -67,6 +67,7 @@ NOW=$(date +%d-%m-%Y)
  /bin/echo "**** 1. Cut manual and initial segmentation and get the initialization accuracy(DSC, MSD, DiameterProfile) All based on manual centerline***" 
  /bin/echo "********************************************************************************************************************************************"  
  /bin/echo " 1.a) Cut both segmentations and calculate dice and jaccard coefficient: "
+ /bin/echo " "
  module load mcr;
  $Matlab_path/Dice_Correct_ShuaiResults $Manual_Centerline $Manual_Segmentation $Auto_Initialization $Seg_Net/Manual $Seg_Net/Auto
 
@@ -81,114 +82,114 @@ NOW=$(date +%d-%m-%Y)
 
  /bin/echo Dice, Mean surface distance and diameter measurements for the initialaization Ends on: `date`
 
- ###################################################################################################################
- ########### 2. Aorta segmentation initialized with the deep learning results on original volume ###################
- /bin/echo  "********************************************************************************************************" 
- /bin/echo  "***** 2.  Aorta segmentation initialized with the deep learning results on original volume *************"  
- #Parameters_Aorta:
- inner_smooth_A="50"  
- grid_spacing_A="0.8"  	
- kernel_size_A="31" 
- sample_interval_A="0.5" 
- edge_length_A="0.8"  
- regularization_A="1.6"  
- Max_inner_flowLine_A="14"  
- Max_Outer_flowLine_A="20"
+ # # ###################################################################################################################
+ # # ########### 2. Aorta segmentation initialized with the deep learning results on original volume ###################
+ # # /bin/echo  "********************************************************************************************************" 
+ # # /bin/echo  "***** 2.  Aorta segmentation initialized with the deep learning results on original volume *************"  
+ # # #Parameters_Aorta:
+ # # inner_smooth_A="50"  
+ # # grid_spacing_A="0.8"  	
+ # # kernel_size_A="31" 
+ # # sample_interval_A="0.5" 
+ # # edge_length_A="0.8"  
+ # # regularization_A="1.6"  
+ # # Max_inner_flowLine_A="14"  
+ # # Max_Outer_flowLine_A="20"
  
- /bin/echo "Aorta parameters are:
- inner_smooth_A: $inner_smooth_A
- grid_spacing_A: $grid_spacing_A    
- kernel_size_A: $kernel_size_A    
- sample_interval_A: $sample_interval_A 
- edge_length_A: $edge_length_A     
- regularization_A: $regularization_A   
- Max_inner_flowLine_A: $Max_inner_flowLine_A 
- Max_Outer_flowLine_A: $Max_Outer_flowLine_A"
+ # # /bin/echo "Aorta parameters are:
+ # # inner_smooth_A: $inner_smooth_A
+ # # grid_spacing_A: $grid_spacing_A    
+ # # kernel_size_A: $kernel_size_A    
+ # # sample_interval_A: $sample_interval_A 
+ # # edge_length_A: $edge_length_A     
+ # # regularization_A: $regularization_A   
+ # # Max_inner_flowLine_A: $Max_inner_flowLine_A 
+ # # Max_Outer_flowLine_A: $Max_Outer_flowLine_A"
 
- /bin/echo "\n ** Aorta Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
- $Path_Opfront $Vol_dcm $Seg_Net/Auto.dcm $Seg_Aorta_Org ${inner_smooth_A} ${grid_spacing_A} ${kernel_size_A} ${sample_interval_A} ${edge_length_A} ${regularization_A} ${Max_inner_flowLine_A} ${Max_Outer_flowLine_A} 
- /bin/echo Aorta Segmentation Ends on: `date`
+ # # /bin/echo "\n ** Aorta Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
+ # # $Path_Opfront $Vol_dcm $Seg_Net/Auto.dcm $Seg_Aorta_Org ${inner_smooth_A} ${grid_spacing_A} ${kernel_size_A} ${sample_interval_A} ${edge_length_A} ${regularization_A} ${Max_inner_flowLine_A} ${Max_Outer_flowLine_A} 
+ # # /bin/echo Aorta Segmentation Ends on: `date`
 
- ################################################################################################################
- ######## 3. Dice, Diameter profile and surface distance statistics for original volume #########################
- /bin/echo  "**************************************************************************************************" 
- /bin/echo  "***** 3. Dice, Diameter profile and surface distance statistics for original volume **************"  
+ # # ################################################################################################################
+ # # ######## 3. Dice, Diameter profile and surface distance statistics for original volume #########################
+ # # /bin/echo  "**************************************************************************************************" 
+ # # /bin/echo  "***** 3. Dice, Diameter profile and surface distance statistics for original volume **************"  
  
- /bin/echo " 1.a) Cut both segmentations and calculate dice and jaccard coefficient: "
- module load mcr/R2015b
- $Matlab_path/Dice_Correct_ShuaiResults $Manual_Centerline $Manual_Segmentation $Seg_Aorta_Org/${File}_Segmentation.dcm $Seg_Aorta_Org/Manual $Seg_Aorta_Org/Auto
+ # # /bin/echo " 1.a) Cut both segmentations and calculate dice and jaccard coefficient: "
+ # # module load mcr/R2015b
+ # # $Matlab_path/Dice_Correct_ShuaiResults $Manual_Centerline $Manual_Segmentation $Seg_Aorta_Org/${File}_Segmentation.dcm $Seg_Aorta_Org/Manual $Seg_Aorta_Org/Auto
 
- /bin/echo " 3.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
- $Path_MeanDIST $Seg_Aorta_Org/Auto.mhd $Seg_Aorta_Org/Manual.mhd $Seg_Aorta_Org/MSD_CompleteVolume.txt
- rm $Seg_Aorta_Org/*.mhd 
- rm $Seg_Aorta_Org/*.raw
+ # # /bin/echo " 3.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
+ # # $Path_MeanDIST $Seg_Aorta_Org/Auto.mhd $Seg_Aorta_Org/Manual.mhd $Seg_Aorta_Org/MSD_CompleteVolume.txt
+ # # rm $Seg_Aorta_Org/*.mhd 
+ # # rm $Seg_Aorta_Org/*.raw
  
- /bin/echo " 3.b) calculate the diameter profile at different cross sectionals: "
- $Matlab_path/DiameterPerSlice_Shuai_Results $Manual_Segmentation $Seg_Aorta_Org/Auto.dcm $Manual_Centerline $Manual_Centerline $Manual_Bif $Seg_Aorta_Org
- module unload mcr 
+ # # /bin/echo " 3.b) calculate the diameter profile at different cross sectionals: "
+ # # $Matlab_path/DiameterPerSlice_Shuai_Results $Manual_Segmentation $Seg_Aorta_Org/Auto.dcm $Manual_Centerline $Manual_Centerline $Manual_Bif $Seg_Aorta_Org
+ # # module unload mcr 
 
- /bin/echo Dice, Mean surface distance and diameter measurements for the Aorta segmentation with original image Ends on: `date`
+ # # /bin/echo Dice, Mean surface distance and diameter measurements for the Aorta segmentation with original image Ends on: `date`
 
-##############################################################################
-############ 5. Reduce the contrast of the volume ############################
- /bin/echo "*****************************************************************" 
- /bin/echo "*********** 5. Reduce the contrast of the volume ****************" 
+# # ##############################################################################
+# # ############ 5. Reduce the contrast of the volume ############################
+ # # /bin/echo "*****************************************************************" 
+ # # /bin/echo "*********** 5. Reduce the contrast of the volume ****************" 
  
- module load mcr
- $Matlab_path/ContrastChanged $Vol_dcm $Seg_Aorta_Contrast   
- module unload mcr 
+ # # module load mcr
+ # # $Matlab_path/ContrastChanged $Vol_dcm $Seg_Aorta_Contrast   
+ # # module unload mcr 
  
- #####################################################################################################################
- ########### 5. Aorta segmentation initialized with the deep learning results on Contrast reduced Volume #############
- /bin/echo  "********************************************************************************************************" 
- /bin/echo  "***** 5.  Aorta segmentation initialized with the deep learning results Contrast reduced Volume ********"  
- #Parameters_Aorta:
- inner_smooth_A="50"  
- grid_spacing_A="0.8"  	
- kernel_size_A="31" 
- sample_interval_A="0.5" 
- edge_length_A="0.8"  
- regularization_A="1.6"  
- Max_inner_flowLine_A="14"  
- Max_Outer_flowLine_A="20"
+ # # #####################################################################################################################
+ # # ########### 5. Aorta segmentation initialized with the deep learning results on Contrast reduced Volume #############
+ # # /bin/echo  "********************************************************************************************************" 
+ # # /bin/echo  "***** 5.  Aorta segmentation initialized with the deep learning results Contrast reduced Volume ********"  
+ # # #Parameters_Aorta:
+ # # inner_smooth_A="50"  
+ # # grid_spacing_A="0.8"  	
+ # # kernel_size_A="31" 
+ # # sample_interval_A="0.5" 
+ # # edge_length_A="0.8"  
+ # # regularization_A="1.6"  
+ # # Max_inner_flowLine_A="14"  
+ # # Max_Outer_flowLine_A="20"
  
- /bin/echo "Aorta parameters are:
- inner_smooth_A: $inner_smooth_A
- grid_spacing_A: $grid_spacing_A    
- kernel_size_A: $kernel_size_A    
- sample_interval_A: $sample_interval_A 
- edge_length_A: $edge_length_A     
- regularization_A: $regularization_A   
- Max_inner_flowLine_A: $Max_inner_flowLine_A 
- Max_Outer_flowLine_A: $Max_Outer_flowLine_A"
+ # # /bin/echo "Aorta parameters are:
+ # # inner_smooth_A: $inner_smooth_A
+ # # grid_spacing_A: $grid_spacing_A    
+ # # kernel_size_A: $kernel_size_A    
+ # # sample_interval_A: $sample_interval_A 
+ # # edge_length_A: $edge_length_A     
+ # # regularization_A: $regularization_A   
+ # # Max_inner_flowLine_A: $Max_inner_flowLine_A 
+ # # Max_Outer_flowLine_A: $Max_Outer_flowLine_A"
 
- /bin/echo "\n ** Aorta Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
- $Path_Opfront $Seg_Aorta_Contrast/${File}_Threshold150.dcm $Seg_Net/Auto.dcm $Seg_Aorta_Contrast ${inner_smooth_A} ${grid_spacing_A} ${kernel_size_A} ${sample_interval_A} ${edge_length_A} ${regularization_A} ${Max_inner_flowLine_A} ${Max_Outer_flowLine_A} 
- /bin/echo Aorta Segmentation Ends on: `date`
+ # # /bin/echo "\n ** Aorta Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
+ # # $Path_Opfront $Seg_Aorta_Contrast/${File}_Threshold150.dcm $Seg_Net/Auto.dcm $Seg_Aorta_Contrast ${inner_smooth_A} ${grid_spacing_A} ${kernel_size_A} ${sample_interval_A} ${edge_length_A} ${regularization_A} ${Max_inner_flowLine_A} ${Max_Outer_flowLine_A} 
+ # # /bin/echo Aorta Segmentation Ends on: `date`
 
- ########################################################################################################################
- ######## 6. Dice, Diameter profile and surface distance statistics for contrast reduced volume #########################
- /bin/echo  "***********************************************************************************************************" 
- /bin/echo  "***** 6. Dice, Diameter profile and surface distance statistics for contrast reduced volume ***************"  
+ # # ########################################################################################################################
+ # # ######## 6. Dice, Diameter profile and surface distance statistics for contrast reduced volume #########################
+ # # /bin/echo  "***********************************************************************************************************" 
+ # # /bin/echo  "***** 6. Dice, Diameter profile and surface distance statistics for contrast reduced volume ***************"  
  
- /bin/echo " 6.a) Cut both segmentations and calculate dice and jaccard coefficient: "
- module load mcr/R2015b
- $Matlab_path/Dice_Correct_ShuaiResults $Manual_Centerline $Manual_Segmentation $Seg_Aorta_Contrast/${File}_Segmentation.dcm $Seg_Aorta_Contrast/Manual $Seg_Aorta_Contrast/Auto
+ # # /bin/echo " 6.a) Cut both segmentations and calculate dice and jaccard coefficient: "
+ # # module load mcr/R2015b
+ # # $Matlab_path/Dice_Correct_ShuaiResults $Manual_Centerline $Manual_Segmentation $Seg_Aorta_Contrast/${File}_Segmentation.dcm $Seg_Aorta_Contrast/Manual $Seg_Aorta_Contrast/Auto
 
- /bin/echo " 6.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
- $Path_MeanDIST $Seg_Aorta_Contrast/Auto.mhd $Seg_Aorta_Contrast/Manual.mhd $Seg_Aorta_Contrast/MSD_CompleteVolume.txt
- rm $Seg_Aorta_Contrast/*.mhd 
- rm $Seg_Aorta_Contrast/*.raw
+ # # /bin/echo " 6.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
+ # # $Path_MeanDIST $Seg_Aorta_Contrast/Auto.mhd $Seg_Aorta_Contrast/Manual.mhd $Seg_Aorta_Contrast/MSD_CompleteVolume.txt
+ # # rm $Seg_Aorta_Contrast/*.mhd 
+ # # rm $Seg_Aorta_Contrast/*.raw
  
- /bin/echo " 6.b) calculate the diameter profile at different cross sectionals: " 
- $Matlab_path/DiameterPerSlice_Shuai_Results $Manual_Segmentation $Seg_Aorta_Contrast/Auto.dcm $Manual_Centerline $Manual_Centerline $Manual_Bif $Seg_Aorta_Contrast
+ # # /bin/echo " 6.b) calculate the diameter profile at different cross sectionals: " 
+ # # $Matlab_path/DiameterPerSlice_Shuai_Results $Manual_Segmentation $Seg_Aorta_Contrast/Auto.dcm $Manual_Centerline $Manual_Centerline $Manual_Bif $Seg_Aorta_Contrast
 
- module unload mcr 
+ # # module unload mcr 
 
- /bin/echo Dice, Mean surface distance and diameter measurements for the Aorta segmentation with contrast reduced image Ends on: `date`
+ # # /bin/echo Dice, Mean surface distance and diameter measurements for the Aorta segmentation with contrast reduced image Ends on: `date`
 
-####################################################################################
- End_Total=$(date +%s)
- runtime_total=$((End_Total - Start_Total))
- runtime_total_print=$(python -c "print '%u:%02u' % ((${runtime_total})/60, (${runtime_total})%60)")
+# # ####################################################################################
+ # # End_Total=$(date +%s)
+ # # runtime_total=$((End_Total - Start_Total))
+ # # runtime_total_print=$(python -c "print '%u:%02u' % ((${runtime_total})/60, (${runtime_total})%60)")
  /bin/echo Total Runtime : $runtime_total_print  

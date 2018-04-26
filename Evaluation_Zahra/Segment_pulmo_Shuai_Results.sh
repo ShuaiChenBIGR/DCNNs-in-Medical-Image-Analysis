@@ -58,8 +58,8 @@ NOW=$(date +%d-%m-%Y)
  Seg_Pulmo_Contrast=$Output_folder/Pulmo_Segmentation_ContrastReduced
  Seg_Net=$Output_folder/Deeplearning_Accuracy
 
- mkdir -p $Seg_Pulmo_Org
- mkdir -p $Seg_Pulmo_Contrast
+ #mkdir -p $Seg_Pulmo_Org
+ #mkdir -p $Seg_Pulmo_Contrast
  mkdir -p $Seg_Net
  
 #################################################################################################################################################
@@ -78,105 +78,4 @@ NOW=$(date +%d-%m-%Y)
  
  /bin/echo Dice, Mean surface distance for the initialaization Ends on: `date`
 
- ###################################################################################################################
- ########### 2. Pulmonary artery  segmentation initialized with the deep learning results on original volume ###################
- /bin/echo  "********************************************************************************************************" 
- /bin/echo  "***** 2.  Pulmonary artery  segmentation initialized with the deep learning results on original volume *************"  
- #Parameters_Aorta:
- inner_smooth_P="50"  
- grid_spacing_P="0.8"  	
- kernel_size_P="31" 
- sample_interval_P="0.5" 
- edge_length_P="0.8"  
- regularization_P="1.6"  
- Max_inner_flowLine_P="14"  
- Max_Outer_flowLine_P="20"
- 
- /bin/echo "Pulmonary artery  parameters are:
- inner_smooth_P: $inner_smooth_P
- grid_spacing_P: $grid_spacing_P    
- kernel_size_P: $kernel_size_P    
- sample_interval_P: $sample_interval_P 
- edge_length_P: $edge_length_P     
- regularization_P: $regularization_P   
- Max_inner_flowLine_P: $Max_inner_flowLine_P 
- Max_Outer_flowLine_P: $Max_Outer_flowLine_P"
-
- /bin/echo "\n ** Pulmonary artery  Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
- $Path_Opfront $Vol_dcm $Seg_Net/Auto.dcm $Seg_Pulmo_Org ${inner_smooth_P} ${grid_spacing_P} ${kernel_size_P} ${sample_interval_P} ${edge_length_P} ${regularization_P} ${Max_inner_flowLine_P} ${Max_Outer_flowLine_P} 
- /bin/echo Pulmonary artery  Segmentation Ends on: `date`
-
- ################################################################################################################
- ######## 3. Dice and surface distance statistics for original volume #########################
- /bin/echo  "**************************************************************************************************" 
- /bin/echo  "***** 3. Dice and surface distance statistics for original volume **************"  
- 
- /bin/echo " 1.a) Cut both segmentations and calculate dice and jaccard coefficient: "
- module load mcr/R2015b
- $Matlab_path/Dice_Correct_Pulmo_ShuaiResults $Manual_LeftCenterline $Manual_RightCenterline $Manual_Segmentation $Seg_Pulmo_Org/${File}_Segmentation.dcm $Seg_Pulmo_Org/Manual $Seg_Pulmo_Org/Auto
-
- /bin/echo " 3.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
- $Path_MeanDIST $Seg_Pulmo_Org/Auto.mhd $Seg_Pulmo_Org/Manual.mhd $Seg_Pulmo_Org/MSD_CompleteVolume.txt
- rm $Seg_Pulmo_Org/*.mhd 
- rm $Seg_Pulmo_Org/*.raw
-
- /bin/echo Dice, Mean surface distance for the Pulmonary artery segmentation with original image Ends on: `date`
-
-##############################################################################
-############ 5. Reduce the contrast of the volume ############################
- /bin/echo "*****************************************************************" 
- /bin/echo "*********** 5. Reduce the contrast of the volume ****************" 
- 
- module load mcr
- $Matlab_path/ContrastChanged $Vol_dcm $Seg_Pulmo_Contrast   
- module unload mcr 
- 
- #####################################################################################################################
- ########### 5. Pulmonary artery  segmentation initialized with the deep learning results on Contrast reduced Volume #############
- /bin/echo  "********************************************************************************************************" 
- /bin/echo  "***** 5. Pulmonary artery segmentation initialized with the deep learning results Contrast reduced Volume ********"  
- #Parameters_Aorta:
- inner_smooth_P="50"  
- grid_spacing_P="0.8"  	
- kernel_size_P="31" 
- sample_interval_P="0.5" 
- edge_length_P="0.8"  
- regularization_P="1.6"  
- Max_inner_flowLine_P="14"  
- Max_Outer_flowLine_P="20"
- 
- /bin/echo "Pulmonary artery  parameters are:
- inner_smooth_P: $inner_smooth_P
- grid_spacing_P: $grid_spacing_P    
- kernel_size_P: $kernel_size_P    
- sample_interval_P: $sample_interval_P 
- edge_length_P: $edge_length_P     
- regularization_P: $regularization_P   
- Max_inner_flowLine_P: $Max_inner_flowLine_P 
- Max_Outer_flowLine_P: $Max_Outer_flowLine_P"
-
- /bin/echo "\n ** Pulmonary artery  Segmentation with Opfront:"	   # segmentation (as an input everything should be dicom)
- $Path_Opfront $Seg_Pulmo_Contrast/${File}_Threshold150.dcm $Seg_Net/Auto.dcm $Seg_Pulmo_Contrast ${inner_smooth_P} ${grid_spacing_P} ${kernel_size_P} ${sample_interval_P} ${edge_length_P} ${regularization_P} ${Max_inner_flowLine_P} ${Max_Outer_flowLine_P} 
- /bin/echo Pulmonary artery  Segmentation Ends on: `date`
-
- ########################################################################################################################
- ######## 6. Dice and surface distance statistics for contrast reduced volume #########################
- /bin/echo  "***********************************************************************************************************" 
- /bin/echo  "***** 6. Dice, and surface distance statistics for contrast reduced volume ***************"  
- 
- /bin/echo " 6.a) Cut both segmentations and calculate dice and jaccard coefficient: "
- module load mcr/R2015b
- $Matlab_path/Dice_Correct_Pulmo_ShuaiResults $Manual_LeftCenterline $Manual_RightCenterline $Manual_Segmentation $Seg_Pulmo_Contrast/${File}_Segmentation.dcm $Seg_Pulmo_Contrast/Manual $Seg_Pulmo_Contrast/Auto
-
- /bin/echo " 6.b) calculate the mean surface distance (mean, max, min, std of the surface distance): "
- $Path_MeanDIST $Seg_Pulmo_Contrast/Auto.mhd $Seg_Pulmo_Contrast/Manual.mhd $Seg_Pulmo_Contrast/MSD_CompleteVolume.txt
- rm $Seg_Pulmo_Contrast/*.mhd 
- rm $Seg_Pulmo_Contrast/*.raw
- 
- /bin/echo Dice, Mean surface distance for the pulmonary artery segmentation with contrast reduced image Ends on: `date`
-
-####################################################################################
- End_Total=$(date +%s)
- runtime_total=$((End_Total - Start_Total))
- runtime_total_print=$(python -c "print '%u:%02u' % ((${runtime_total})/60, (${runtime_total})%60)")
  /bin/echo Total Runtime : $runtime_total_print  
